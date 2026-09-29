@@ -12,8 +12,11 @@ namespace TaskWidget.Services;
 /// </summary>
 public static class Storage
 {
-    public static readonly string Dir = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TaskWidget");
+    // TASKWIDGET_DATA_DIR lets dev/test runs use a separate data folder.
+    public static readonly string Dir =
+        Environment.GetEnvironmentVariable("TASKWIDGET_DATA_DIR") is { Length: > 0 } custom
+            ? custom
+            : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TaskWidget");
 
     private static readonly JsonSerializerOptions Options = new()
     {

@@ -8,6 +8,10 @@
   Une petite to-do list pour Windows, toujours au premier plan, que l'on place où l'on veut sur l'écran.
 </p>
 
+<p align="center">
+  <img src="docs/screenshot.png" alt="Vues Tâches, Historique et Réglages de TaskWidget">
+</p>
+
 ---
 
 ## Fonctionnalités
@@ -49,6 +53,8 @@ Prérequis : [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0).
 cd TaskWidget
 dotnet run
 ```
+
+Pour tester sans toucher à ses propres tâches, on peut pointer l'application vers un autre dossier de données avec la variable d'environnement `TASKWIDGET_DATA_DIR`.
 
 Générer l'exécutable autonome (un seul fichier) :
 

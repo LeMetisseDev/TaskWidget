@@ -27,7 +27,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <Button Style="{StaticResource IconButton}" Click="ToggleDone_Click" ToolTip="Valider"
+                    <Button Style="{StaticResource IconButton}" Click="ToggleDone_Click" ToolTip="Valider" AutomationProperties.Name="Valider"
                             VerticalAlignment="Top">
                         <iconPacks:PackIconMaterial x:Name="DoneIcon" Kind="CheckboxBlankCircleOutline"
                                                     Width="16" Height="16"/>
@@ -35,7 +35,7 @@
                     <TextBlock x:Name="Label" Grid.Column="1" Text="{Binding Text}" TextWrapping="Wrap"
                                VerticalAlignment="Center" Margin="4,5,4,5"
                                Foreground="{DynamicResource FgBrush}"/>
-                    <Button Grid.Column="2" Style="{StaticResource IconButton}" Click="Archive_Click"
+                    <Button Grid.Column="2" Style="{StaticResource IconButton}" Click="Archive_Click" AutomationProperties.Name="Archiver"
                             ToolTip="Archiver" VerticalAlignment="Top">
                         <iconPacks:PackIconMaterial Kind="ArchiveArrowDownOutline" Style="{StaticResource SmallIcon}"/>
                     </Button>
@@ -65,11 +65,11 @@
                         <TextBlock Text="{Binding ArchivedAt, StringFormat='Archivée le {0:dd/MM/yyyy HH:mm}'}"
                                    FontSize="11" Foreground="{DynamicResource MutedBrush}" Margin="0,2,0,0"/>
                     </StackPanel>
-                    <Button Grid.Column="1" Style="{StaticResource IconButton}" Click="Restore_Click"
+                    <Button Grid.Column="1" Style="{StaticResource IconButton}" Click="Restore_Click" AutomationProperties.Name="Restaurer"
                             ToolTip="Restaurer" VerticalAlignment="Top">
                         <iconPacks:PackIconMaterial Kind="Restore" Style="{StaticResource SmallIcon}"/>
                     </Button>
-                    <Button Grid.Column="2" Style="{StaticResource DangerIconButton}" Click="Delete_Click"
+                    <Button Grid.Column="2" Style="{StaticResource DangerIconButton}" Click="Delete_Click" AutomationProperties.Name="Supprimer définitivement"
                             ToolTip="Supprimer définitivement" VerticalAlignment="Top">
                         <iconPacks:PackIconMaterial Kind="TrashCanOutline" Style="{StaticResource SmallIcon}"/>
                     </Button>
@@ -94,7 +94,7 @@
             <!-- Title bar: drag area + actions -->
             <Grid Background="Transparent" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0,0,0">
-                    <Button x:Name="BackButton" Style="{StaticResource IconButton}" Click="Back_Click"
+                    <Button x:Name="BackButton" Style="{StaticResource IconButton}" Click="Back_Click" AutomationProperties.Name="Retour"
                             ToolTip="Retour" Visibility="Collapsed">
                         <iconPacks:PackIconMaterial Kind="ArrowLeft" Style="{StaticResource SmallIcon}"/>
                     </Button>
@@ -103,16 +103,16 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
                             Margin="0,0,6,0">
-                    <Button Style="{StaticResource IconButton}" Click="History_Click" ToolTip="Historique">
+                    <Button Style="{StaticResource IconButton}" Click="History_Click" ToolTip="Historique" AutomationProperties.Name="Historique">
                         <iconPacks:PackIconMaterial Kind="History" Style="{StaticResource SmallIcon}"/>
                     </Button>
-                    <Button Style="{StaticResource IconButton}" Click="Settings_Click" ToolTip="Réglages">
+                    <Button Style="{StaticResource IconButton}" Click="Settings_Click" ToolTip="Réglages" AutomationProperties.Name="Réglages">
                         <iconPacks:PackIconMaterial Kind="CogOutline" Style="{StaticResource SmallIcon}"/>
                     </Button>
-                    <Button Style="{StaticResource IconButton}" Click="Minimize_Click" ToolTip="Réduire">
+                    <Button Style="{StaticResource IconButton}" Click="Minimize_Click" ToolTip="Réduire" AutomationProperties.Name="Réduire">
                         <iconPacks:PackIconMaterial Kind="WindowMinimize" Style="{StaticResource SmallIcon}"/>
                     </Button>
-                    <Button Style="{StaticResource DangerIconButton}" Click="Close_Click" ToolTip="Fermer">
+                    <Button Style="{StaticResource DangerIconButton}" Click="Close_Click" ToolTip="Fermer" AutomationProperties.Name="Fermer">
                         <iconPacks:PackIconMaterial Kind="Close" Style="{StaticResource SmallIcon}"/>
                     </Button>
                 </StackPanel>
@@ -134,7 +134,7 @@
                     <TextBlock x:Name="Placeholder" Text="Nouvelle tâche…" IsHitTestVisible="False"
                                Margin="11,0,0,0" VerticalAlignment="Center"
                                Foreground="{DynamicResource MutedBrush}"/>
-                    <Button Grid.Column="1" Style="{StaticResource AccentButton}" Click="Add_Click"
+                    <Button Grid.Column="1" Style="{StaticResource AccentButton}" Click="Add_Click" AutomationProperties.Name="Ajouter"
                             ToolTip="Ajouter" Width="32" Margin="6,0,0,0">
                         <iconPacks:PackIconMaterial Kind="Plus" Width="14" Height="14"/>
                     </Button>
