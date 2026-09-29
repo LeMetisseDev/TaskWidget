@@ -1,0 +1,214 @@
+<Window x:Class="TaskWidget.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:m="clr-namespace:TaskWidget.Models"
+        Title="Tâches" Icon="app.ico" Width="320" Height="480" MinWidth="240" MinHeight="260"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        Topmost="True" ResizeMode="CanResize"
+        FontFamily="Segoe UI" FontSize="13"
+        Closing="Window_Closing">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0" ResizeBorderThickness="6" GlassFrameThickness="0"
+                      CornerRadius="0" UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
+
+    <Window.Resources>
+        <Style x:Key="SmallIcon" TargetType="iconPacks:PackIconMaterial">
+            <Setter Property="Width" Value="14"/>
+            <Setter Property="Height" Value="14"/>
+        </Style>
+
+        <DataTemplate x:Key="TaskTemplate" DataType="{x:Type m:TaskItem}">
+            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="6" Margin="0,0,0,6" Padding="4">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Style="{StaticResource IconButton}" Click="ToggleDone_Click" ToolTip="Valider"
+                            VerticalAlignment="Top">
+                        <iconPacks:PackIconMaterial x:Name="DoneIcon" Kind="CheckboxBlankCircleOutline"
+                                                    Width="16" Height="16"/>
+                    </Button>
+                    <TextBlock x:Name="Label" Grid.Column="1" Text="{Binding Text}" TextWrapping="Wrap"
+                               VerticalAlignment="Center" Margin="4,5,4,5"
+                               Foreground="{DynamicResource FgBrush}"/>
+                    <Button Grid.Column="2" Style="{StaticResource IconButton}" Click="Archive_Click"
+                            ToolTip="Archiver" VerticalAlignment="Top">
+                        <iconPacks:PackIconMaterial Kind="ArchiveArrowDownOutline" Style="{StaticResource SmallIcon}"/>
+                    </Button>
+                </Grid>
+            </Border>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding Done}" Value="True">
+                    <Setter TargetName="DoneIcon" Property="Kind" Value="CheckCircle"/>
+                    <Setter TargetName="DoneIcon" Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+                    <Setter TargetName="Label" Property="TextDecorations" Value="Strikethrough"/>
+                    <Setter TargetName="Label" Property="Foreground" Value="{DynamicResource MutedBrush}"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <DataTemplate x:Key="HistoryTemplate" DataType="{x:Type m:TaskItem}">
+            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="6" Margin="0,0,0,6" Padding="10,4,4,4">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel VerticalAlignment="Center" Margin="0,2,4,2">
+                        <TextBlock x:Name="Label" Text="{Binding Text}" TextWrapping="Wrap"
+                                   Foreground="{DynamicResource FgBrush}"/>
+                        <TextBlock Text="{Binding ArchivedAt, StringFormat='Archivée le {0:dd/MM/yyyy HH:mm}'}"
+                                   FontSize="11" Foreground="{DynamicResource MutedBrush}" Margin="0,2,0,0"/>
+                    </StackPanel>
+                    <Button Grid.Column="1" Style="{StaticResource IconButton}" Click="Restore_Click"
+                            ToolTip="Restaurer" VerticalAlignment="Top">
+                        <iconPacks:PackIconMaterial Kind="Restore" Style="{StaticResource SmallIcon}"/>
+                    </Button>
+                    <Button Grid.Column="2" Style="{StaticResource DangerIconButton}" Click="Delete_Click"
+                            ToolTip="Supprimer définitivement" VerticalAlignment="Top">
+                        <iconPacks:PackIconMaterial Kind="TrashCanOutline" Style="{StaticResource SmallIcon}"/>
+                    </Button>
+                </Grid>
+            </Border>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding Done}" Value="True">
+                    <Setter TargetName="Label" Property="TextDecorations" Value="Strikethrough"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Border Background="{DynamicResource BgBrush}" CornerRadius="10"
+            BorderBrush="{DynamicResource SurfaceHoverBrush}" BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Title bar: drag area + actions -->
+            <Grid Background="Transparent" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0,0,0">
+                    <Button x:Name="BackButton" Style="{StaticResource IconButton}" Click="Back_Click"
+                            ToolTip="Retour" Visibility="Collapsed">
+                        <iconPacks:PackIconMaterial Kind="ArrowLeft" Style="{StaticResource SmallIcon}"/>
+                    </Button>
+                    <TextBlock x:Name="TitleText" Text="Tâches" FontWeight="SemiBold" Margin="6,0,0,0"
+                               VerticalAlignment="Center" Foreground="{DynamicResource FgBrush}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
+                            Margin="0,0,6,0">
+                    <Button Style="{StaticResource IconButton}" Click="History_Click" ToolTip="Historique">
+                        <iconPacks:PackIconMaterial Kind="History" Style="{StaticResource SmallIcon}"/>
+                    </Button>
+                    <Button Style="{StaticResource IconButton}" Click="Settings_Click" ToolTip="Réglages">
+                        <iconPacks:PackIconMaterial Kind="CogOutline" Style="{StaticResource SmallIcon}"/>
+                    </Button>
+                    <Button Style="{StaticResource IconButton}" Click="Minimize_Click" ToolTip="Réduire">
+                        <iconPacks:PackIconMaterial Kind="WindowMinimize" Style="{StaticResource SmallIcon}"/>
+                    </Button>
+                    <Button Style="{StaticResource DangerIconButton}" Click="Close_Click" ToolTip="Fermer">
+                        <iconPacks:PackIconMaterial Kind="Close" Style="{StaticResource SmallIcon}"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <!-- Tasks view -->
+            <Grid x:Name="TasksView" Grid.Row="1" Margin="10,0,10,10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="NewTaskBox" Style="{StaticResource InputBox}" KeyDown="NewTaskBox_KeyDown"
+                             TextChanged="NewTaskBox_TextChanged"/>
+                    <TextBlock x:Name="Placeholder" Text="Nouvelle tâche…" IsHitTestVisible="False"
+                               Margin="11,0,0,0" VerticalAlignment="Center"
+                               Foreground="{DynamicResource MutedBrush}"/>
+                    <Button Grid.Column="1" Style="{StaticResource AccentButton}" Click="Add_Click"
+                            ToolTip="Ajouter" Width="32" Margin="6,0,0,0">
+                        <iconPacks:PackIconMaterial Kind="Plus" Width="14" Height="14"/>
+                    </Button>
+                </Grid>
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <ItemsControl x:Name="TaskList" ItemTemplate="{StaticResource TaskTemplate}"/>
+                </ScrollViewer>
+                <TextBlock x:Name="TasksEmpty" Grid.Row="1" Text="Aucune tâche pour l'instant"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Foreground="{DynamicResource MutedBrush}"/>
+            </Grid>
+
+            <!-- History view -->
+            <Grid x:Name="HistoryView" Grid.Row="1" Margin="10,0,10,10" Visibility="Collapsed">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <ItemsControl x:Name="HistoryList" ItemTemplate="{StaticResource HistoryTemplate}"/>
+                </ScrollViewer>
+                <TextBlock x:Name="HistoryEmpty" Text="Aucune tâche archivée"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Foreground="{DynamicResource MutedBrush}"/>
+            </Grid>
+
+            <!-- Settings view -->
+            <ScrollViewer x:Name="SettingsView" Grid.Row="1" Visibility="Collapsed"
+                          VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Margin="12,0,12,12">
+                    <TextBlock Text="OPACITÉ" Style="{StaticResource SectionTitle}" Margin="0,0,0,6"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="40"/>
+                        </Grid.ColumnDefinitions>
+                        <Slider x:Name="OpacitySlider" Minimum="0.3" Maximum="1" SmallChange="0.05"
+                                LargeChange="0.1" VerticalAlignment="Center" Focusable="False"
+                                ValueChanged="OpacitySlider_ValueChanged"/>
+                        <TextBlock x:Name="OpacityText" Grid.Column="1" TextAlignment="Right"
+                                   VerticalAlignment="Center" Foreground="{DynamicResource FgBrush}"/>
+                    </Grid>
+
+                    <TextBlock Text="THÈMES" Style="{StaticResource SectionTitle}"/>
+                    <WrapPanel x:Name="PresetPanel"/>
+
+                    <TextBlock Text="COULEURS" Style="{StaticResource SectionTitle}"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                        <RadioButton x:Name="TargetBackground" Content="Fond" GroupName="ColorTarget"
+                                     Style="{StaticResource ChipRadio}" IsChecked="True" Checked="ColorTarget_Checked"/>
+                        <RadioButton x:Name="TargetAccent" Content="Accent" GroupName="ColorTarget"
+                                     Style="{StaticResource ChipRadio}" Checked="ColorTarget_Checked"/>
+                        <RadioButton x:Name="TargetForeground" Content="Texte" GroupName="ColorTarget"
+                                     Style="{StaticResource ChipRadio}" Checked="ColorTarget_Checked"/>
+                    </StackPanel>
+                    <WrapPanel x:Name="PalettePanel"/>
+                    <Grid Margin="0,4,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Ellipse x:Name="HexPreview" Width="22" Height="22" Margin="0,0,8,0"
+                                 Stroke="{DynamicResource SurfaceHoverBrush}"/>
+                        <TextBox x:Name="HexBox" Grid.Column="1" Style="{StaticResource InputBox}"
+                                 MaxLength="7" KeyDown="HexBox_KeyDown" LostFocus="HexBox_LostFocus"
+                                 ToolTip="Code hexadécimal, ex. #4F8CFF (Entrée pour appliquer)"/>
+                    </Grid>
+
+                    <Button Style="{StaticResource ChipButton}" Click="ResetTheme_Click"
+                            HorizontalAlignment="Left" Margin="0,16,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="Restore" Width="12" Height="12"
+                                                        VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <TextBlock Text="Réinitialiser"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Border>
+</Window>
